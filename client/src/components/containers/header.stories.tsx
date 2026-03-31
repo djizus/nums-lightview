@@ -1,0 +1,80 @@
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Header } from "./header";
+import { BrowserRouter } from "react-router-dom";
+import { AudioProvider } from "@/context/audio";
+import { SoundProvider } from "@/context/sound";
+
+const meta = {
+  title: "Containers/Header",
+  component: Header,
+  parameters: {
+    layout: "fullscreen",
+    actions: {
+      argTypesRegex: "^on[A-Z].*",
+    },
+  },
+  globals: {
+    backgrounds: {
+      value: "purple",
+    },
+  },
+  argTypes: {
+    balance: {
+      control: "number",
+      description: "The balance value to display",
+    },
+    username: {
+      control: "text",
+      description: "The user's username",
+    },
+    variant: {
+      control: "select",
+      options: ["default"],
+      description: "The visual variant",
+    },
+    onBalance: {
+      table: {
+        disable: true,
+      },
+    },
+    onConnect: {
+      table: {
+        disable: true,
+      },
+    },
+  },
+  args: {
+    balance: 100200,
+    username: undefined,
+    onConnect: () => {},
+    onBalance: () => {},
+  },
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <AudioProvider>
+          <SoundProvider>
+            <Story />
+          </SoundProvider>
+        </AudioProvider>
+      </BrowserRouter>
+    ),
+  ],
+} satisfies Meta<typeof Header>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const Connected: Story = {
+  args: {
+    username: "Username",
+  },
+};
+
+export const Mainnet: Story = {
+  args: {
+    username: "Username",
+  },
+};

@@ -1,0 +1,126 @@
+{
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install",
+  "outputDirectory": "dist",
+  "git": {
+    "deploymentEnabled": true
+  },
+  "rewrites": [
+    {
+      "source": "/ingest/static/:path(.*)",
+      "destination": "https://us-assets.i.posthog.com/static/:path*"
+    },
+    {
+      "source": "/ingest/:path(.*)",
+      "destination": "https://us.i.posthog.com/:path*"
+    },
+    {
+      "source": "/game/:id",
+      "destination": "/api/ssr?id=:id"
+    },
+    {
+      "source": "/api/image/:id",
+      "destination": "/api/image?id=:id"
+    },
+    {
+      "source": "/((?!api/|_vercel|assets/).*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/((?!api/|_vercel|assets/).*)",
+      "destination": "/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/ingest/static/:path(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+        }
+      ]
+    },
+    {
+      "source": "/ingest/:path(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' https://js.stripe.com https://*.stripe.com https://*.cartridge.gg https://cartridge.gg; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.stripe.com https://*.cartridge.gg https://cartridge.gg wss://* https://*; frame-src 'self' https://*.stripe.com https://*.cartridge.gg https://cartridge.gg;"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*.wasm",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/wasm"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' https://js.stripe.com https://*.stripe.com https://*.cartridge.gg https://cartridge.gg; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.stripe.com https://*.cartridge.gg https://cartridge.gg wss://* https://*; frame-src 'self' https://*.stripe.com https://*.cartridge.gg https://cartridge.gg;"
+        }
+      ]
+    }
+  ]
+}

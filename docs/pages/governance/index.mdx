@@ -1,0 +1,44 @@
+# Governance
+
+The protocol is designed to be progressively decentralized. Token holders who stake NUMS in the vault receive **vNUMS**, which grants them voting power over protocol decisions. Governance covers everything from parameter tuning and treasury management to protocol upgrades.
+
+This section explains how governance works across three areas:
+
+<div className="docs-flow">
+  <div className="docs-flow__step">
+    <span className="docs-flow__bullet" />
+    <div className="docs-flow__content">
+      <strong>[Staking](/governance/staking)</strong> — Stake NUMS in the vault
+      to receive vNUMS, which represents your share and grants voting power.
+      This page covers the vault token, how voting power is derived, and the fee
+      structure.
+    </div>
+  </div>
+  <div className="docs-flow__step">
+    <span className="docs-flow__bullet" />
+    <div className="docs-flow__content">
+      <strong>[Votes](/governance/votes)</strong> — The Governor contract
+      manages the full proposal lifecycle: submission, voting, timelock, and
+      execution. This page details how proposals are created, how voting works,
+      and the parameters that govern the process.
+    </div>
+  </div>
+  <div className="docs-flow__step">
+    <span className="docs-flow__bullet" />
+    <div className="docs-flow__content">
+      <strong>[Treasury](/governance/treasury)</strong> — The treasury holds
+      protocol assets and serves as the operational reserve. All fund movements
+      require a passed governance proposal. This page covers what the treasury
+      holds, how funds are allocated, and the safeguards in place.
+    </div>
+  </div>
+</div>
+
+## Design principles
+
+The governance system is built around a few core principles:
+
+- **Progressive decentralization** — The protocol is designed to hand over increasing control to the community over time. Governance can vote to adjust any parameter as the protocol matures.
+- **Onchain execution** — All governance actions are executed onchain through the Governor and Treasury contracts. There is no off-chain multisig or admin override.
+- **Minimal friction** — Staking has no lock-up period and no fee by default. The barrier to participation is intentionally low so that governance reflects the broadest possible set of stakeholders.
+- **Transparency** — Every proposal, vote, and fund movement is recorded onchain and can be independently verified by anyone.

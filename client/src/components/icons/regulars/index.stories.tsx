@@ -1,0 +1,90 @@
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import * as Icons from "@/components/icons/regulars";
+
+const meta = {
+  title: "Icons/Regulars",
+  parameters: {
+    layout: "centered",
+  },
+  globals: {
+    backgrounds: {
+      value: "dark",
+    },
+  },
+} satisfies Meta;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// Icônes sans variant
+const regularIcons = [
+  { name: "AddIcon", component: Icons.AddIcon },
+  { name: "AngleIcon", component: Icons.AngleIcon },
+  { name: "ArrowDownIcon", component: Icons.ArrowDownIcon },
+  { name: "ArrowLeftIcon", component: Icons.ArrowLeftIcon },
+  { name: "ArrowRightIcon", component: Icons.ArrowRightIcon },
+  { name: "AsteriskIcon", component: Icons.AsteriskIcon },
+  { name: "BalloonsIcon", component: Icons.BalloonsIcon },
+  { name: "BookIcon", component: Icons.BookIcon },
+  { name: "BrandIcon", component: Icons.BrandIcon },
+  { name: "CalendarDayIcon", component: Icons.CalendarDayIcon },
+  { name: "CalendarWeekIcon", component: Icons.CalendarWeekIcon },
+  { name: "CartridgeIcon", component: Icons.CartridgeIcon },
+  { name: "CheckIcon", component: Icons.CheckIcon },
+  { name: "CheckboxCheckedIcon", component: Icons.CheckboxCheckedIcon },
+  { name: "CheckboxUncheckedIcon", component: Icons.CheckboxUncheckedIcon },
+  { name: "CircleInfoIcon", component: Icons.CircleInfoIcon },
+  { name: "CircleQuestionIcon", component: Icons.CircleQuestionIcon },
+  { name: "ClockIcon", component: Icons.ClockIcon },
+  { name: "ControllerIcon", component: Icons.ControllerIcon },
+  { name: "CopyIcon", component: Icons.CopyIcon },
+  { name: "CrossIcon", component: Icons.CrossIcon },
+  { name: "CrownIcon", component: Icons.CrownIcon },
+  { name: "DashIcon", component: Icons.DashIcon },
+  { name: "DiamondIcon", component: Icons.DiamondIcon },
+  { name: "DiscordIcon", component: Icons.DiscordIcon },
+  { name: "DojoIcon", component: Icons.DojoIcon },
+  { name: "ExternalLinkIcon", component: Icons.ExternalLinkIcon },
+  { name: "EyeIcon", component: Icons.EyeIcon },
+  { name: "FlowIcon", component: Icons.FlowIcon },
+  { name: "FrownIcon", component: Icons.FrownIcon },
+  { name: "GearIcon", component: Icons.GearIcon },
+  { name: "GithubIcon", component: Icons.GithubIcon },
+  { name: "YieldIcon", component: Icons.YieldIcon },
+  { name: "LaurelIcon", component: Icons.LaurelIcon },
+  { name: "LightbulbIcon", component: Icons.LightbulbIcon },
+  { name: "LinkIcon", component: Icons.LinkIcon },
+  { name: "ListIcon", component: Icons.ListIcon },
+  { name: "LockerIcon", component: Icons.LockerIcon },
+  { name: "PlayIcon", component: Icons.PlayIcon },
+  { name: "PlusIcon", component: Icons.PlusIcon },
+  { name: "QuestIcon", component: Icons.QuestIcon },
+  { name: "QuestUsedIcon", component: Icons.QuestUsedIcon },
+  { name: "ReferralIcon", component: Icons.ReferralIcon },
+  { name: "SubIcon", component: Icons.SubIcon },
+  { name: "RefreshIcon", component: Icons.RefreshIcon },
+  { name: "SignOutIcon", component: Icons.SignOutIcon },
+  { name: "ShareIcon", component: Icons.ShareIcon },
+  { name: "SmileIcon", component: Icons.SmileIcon },
+  { name: "SpinnerIcon", component: Icons.SpinnerIcon },
+  { name: "SpinnerPxIcon", component: Icons.SpinnerPxIcon },
+  { name: "SparklesIcon", component: Icons.SparklesIcon },
+  { name: "StakingIcon", component: Icons.StakingIcon },
+  { name: "StarknetIcon", component: Icons.StarknetIcon },
+  { name: "StarIcon", component: Icons.StarIcon },
+  { name: "TimerIcon", component: Icons.TimerIcon },
+  { name: "TrophyUsedIcon", component: Icons.TrophyUsedIcon },
+  { name: "UnionIcon", component: Icons.UnionIcon },
+  { name: "WalletIcon", component: Icons.WalletIcon },
+  { name: "XIcon", component: Icons.XIcon },
+] as const;
+
+export const Default: Story = {
+  render: () => (
+    <div className="grid grid-cols-[repeat(15,minmax(0,1fr))] gap-4 text-white">
+      {regularIcons.map(({ name, component: Icon }) => (
+        <Icon key={name} size="xl" />
+      ))}
+    </div>
+  ),
+};

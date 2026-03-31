@@ -1,0 +1,181 @@
+@import "./themes/default.css";
+@import "./themes/fonts.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-secondary-100;
+    font-family: "PixelGame", monospace;
+    color: white;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .theme {
+    --animate-shiny-text: shiny-text 8s infinite;
+  }
+  .theme-transitioning,
+  .theme-transitioning *,
+  .theme-transitioning *::before,
+  .theme-transitioning *::after {
+    transition:
+      color 500ms ease,
+      background-color 500ms ease,
+      border-color 500ms ease,
+      fill 500ms ease,
+      stroke 500ms ease,
+      box-shadow 500ms ease !important;
+  }
+}
+
+#root {
+  overflow: hidden;
+  height: 100%;
+}
+
+html,
+body {
+  overflow: hidden;
+  touch-action: manipulation;
+  height: 100%;
+}
+
+@layer utilities {
+  @media (min-width: 768px) {
+    .places-title {
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+  }
+
+  @keyframes reward-diff {
+    0% {
+      opacity: 1;
+      transform: translate(-50%, 0) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, 0) translateY(-40px);
+    }
+  }
+
+  .animate-reward-diff {
+    animation: reward-diff 2s ease-out forwards;
+  }
+
+  @keyframes shimmer-reflect {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .animate-shimmer-reflect {
+    background: linear-gradient(
+      90deg,
+      #ffffff 0%,
+      #ffffff 25%,
+      rgba(255, 255, 255, 0.24) 35%,
+      rgba(255, 255, 255, 0.24) 45%,
+      #ffffff 55%,
+      #ffffff 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer-reflect 6s linear infinite;
+  }
+
+  @keyframes multiplier-fire {
+    0% {
+      background-position:
+        center 0px,
+        center 0px,
+        50% 100%,
+        center center;
+    }
+    100% {
+      background-position:
+        center -500px,
+        center -650px,
+        50% 100%,
+        center center;
+    }
+  }
+
+  @keyframes multiplier-fire-out {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .multiplier-fire::before {
+    content: "";
+    position: absolute;
+    top: var(--fire-top, -50px);
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background-image:
+      url("/assets/silver-glitter-background.png"),
+      url("/assets/silver-glitter-background.png"),
+      linear-gradient(0deg, #ff8951 0px, #dcbc169c 30%, transparent 70%),
+      radial-gradient(ellipse at bottom, transparent 30%, black 60%);
+    background-size:
+      350px 500px,
+      400px 650px,
+      var(--fire-bg-size) 100%,
+      var(--fire-bg-size) 100%;
+    background-blend-mode: hard-light, color-dodge, multiply;
+    background-position:
+      0px 0px,
+      0px 0px,
+      50% 100%,
+      center center;
+    background-repeat: repeat, repeat, no-repeat, no-repeat;
+    mix-blend-mode: color-dodge;
+    filter: brightness(3.7) blur(4px) contrast(var(--fire-contrast, 6));
+    -webkit-mask-image:
+      linear-gradient(0deg, white 0%, white 25%, transparent 65%),
+      radial-gradient(ellipse at bottom, white 25%, transparent 55%);
+    -webkit-mask-composite: destination-in;
+    mask-image:
+      linear-gradient(0deg, white 0%, white 25%, transparent 65%),
+      radial-gradient(ellipse at bottom, white 25%, transparent 55%);
+    mask-composite: intersect;
+    animation:
+      multiplier-fire 1.75s linear infinite,
+      multiplier-fire-out 0.5s ease-out 1.75s forwards;
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  @keyframes marching-ants {
+    to {
+      stroke-dashoffset: -16;
+    }
+  }
+}
+
+@theme inline {
+  @keyframes shiny-text {
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
+}

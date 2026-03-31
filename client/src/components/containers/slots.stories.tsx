@@ -1,0 +1,131 @@
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Slots } from "./slots";
+import { Trap, TrapType } from "@/types/trap";
+
+const meta = {
+  title: "Containers/Slots",
+  component: Slots,
+  parameters: {
+    layout: "padded",
+  },
+  globals: {
+    backgrounds: {
+      value: "dark",
+    },
+  },
+} satisfies Meta<typeof Slots>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    number: 107,
+    min: 1,
+    max: 999,
+    slots: [
+      { value: 0 },
+      { value: 0, trap: new Trap(TrapType.Lucky) },
+      { value: 0 },
+      { value: 0 },
+      { value: 262, trap: new Trap(TrapType.Windy), inactive: true },
+      { value: 0 },
+      { value: 0 },
+      { value: 0, trap: new Trap(TrapType.Magnet) },
+      { value: 0 },
+      { value: 0 },
+      { value: 0, trap: new Trap(TrapType.Bomb) },
+      { value: 0 },
+      { value: 0 },
+      { value: 0, trap: new Trap(TrapType.UFO) },
+      { value: 0 },
+      { value: 0 },
+      { value: 0 },
+      { value: 0 },
+    ],
+  },
+};
+
+export const Valid: Story = {
+  args: {
+    number: 812,
+    min: 1,
+    max: 999,
+    slots: [
+      { value: 0 },
+      { value: 31 },
+      { value: 189 },
+      { value: 198 },
+      { value: 262 },
+      { value: 300 },
+      { value: 312 },
+      { value: 0 },
+      { value: 425 },
+      { value: 551 },
+      { value: 0 },
+      { value: 0 },
+      { value: 629 },
+      { value: 0 },
+      { value: 0 },
+      { value: 722 },
+      { value: 743 },
+      { value: 0 },
+    ],
+  },
+};
+
+export const Highlight: Story = {
+  args: {
+    number: 812,
+    min: 1,
+    max: 999,
+    slots: [
+      { value: 0, highlight: true },
+      { value: 31, highlight: true },
+      { value: 189, highlight: true },
+      { value: 198, highlight: true },
+      { value: 262, highlight: true },
+      { value: 300, highlight: true },
+      { value: 312, highlight: true },
+      { value: 0, highlight: true },
+      { value: 425, highlight: true },
+      { value: 551, highlight: true },
+      { value: 0, highlight: true },
+      { value: 0, highlight: true },
+      { value: 629, highlight: true },
+      { value: 0, highlight: true },
+      { value: 0, highlight: true },
+      { value: 722, highlight: true },
+      { value: 743, highlight: true },
+      { value: 0, highlight: true },
+    ],
+  },
+};
+
+export const Invalid: Story = {
+  args: {
+    number: 812,
+    min: 1,
+    max: 999,
+    slots: [
+      { value: 0 },
+      { value: 31 },
+      { value: 189 },
+      { value: 198 },
+      { value: 262 },
+      { value: 300 },
+      { value: 312 },
+      { value: 0 },
+      { value: 425 },
+      { value: 551 },
+      { value: 0 },
+      { value: 0 },
+      { value: 629 },
+      { value: 0 },
+      { value: 0 },
+      { value: 722 },
+      { value: 743 },
+      { value: 903 }, // Fill the empty slot
+    ],
+  },
+};

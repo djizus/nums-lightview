@@ -1,0 +1,26 @@
+world_address = "0x01c26a4ee3ef91d19e768afcacae51ea5240b2e9a7f861249dcc19af6cc038f2"
+rpc = "https://api.cartridge.gg/x/starknet/mainnet"
+
+[server]
+http_cors_origins = ["*"]
+
+[grpc]
+optimistic = true
+
+[indexing]
+world_block = 0
+controllers = true
+pending = true
+pre_confirmed = true
+polling_interval = 250
+contracts = []
+
+[sql]
+historical = [
+  "NUMS-TrophyProgression",
+  "NUMS-QuestProgression",
+  "NUMS-BundleIssued",
+]
+
+[erc]
+metadata_updates = true

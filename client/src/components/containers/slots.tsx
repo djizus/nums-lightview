@@ -1,0 +1,96 @@
+import { Slot, type SlotProps } from "@/components/elements/slot";
+import { Grid } from "@/helpers";
+import { cn } from "@/lib/utils";
+import { type VariantProps, cva } from "class-variance-authority";
+import { useMemo } from "react";
+import { DraggerIcon } from "../icons";
+
+export interface SlotsProps extends React.HTMLAttributes<HTMLUListElement>, VariantProps<typeof slotsVariants> {
+	number: number;
+	min: number;
+	max: number;
+	slots: Array<SlotProps>;
+}
+
+const slotsVariants = cva(
+	"select-none relative rounded grid grid-flow-col grid-rows-7 md:grid-rows-5 gap-2 md:gap-4 w-full",
+	{
+		variants: {
+			variant: {
+				default: "",
+			},
+		},
+		defaultVariants: {
+			variant: "default",
+		},
+	},
+);
+
+export const Slots = ({ number, min, max, slots, variant, className, ...props }: SlotsProps) => {
+	const allowedIndexes = useMemo(
+		() =>
+			Grid.alloweds(
+				slots.map((slot) => slot.value || 0),
+				number,
+			),
+		[slots, number],
+	);
+	const [closestLower, closestHigher] = useMemo(
+		() =>
+			Grid.closests(
+				slots.map((slot) => slot.value || 0),
+				number,
+			),
+		[slots, number],
+	);
+
+	const invalidIndexes = useMemo(() => {
+		const invalid = new Set<number>();
+
+		if (allowedIndexes.length === 0) {
+			if (closestLower !== -1) invalid.add(closestLower);
+			if (closestHigher !== -1) invalid.add(closestHigher);
+			slots.forEach((slot, index) => {
+				if (!slot.value) {
+					invalid.add(index);
+				}
+			});
+		} else {
+			slots.forEach((slot, index) => {
+				if (!slot.value && !allowedIndexes.includes(index)) {
+					invalid.add(index);
+				}
+			});
+		}
+
+		return invalid;
+	}, [slots, allowedIndexes, closestLower, closestHigher]);
+
+	return (
+		<ul className={cn(slotsVariants({ variant, className }))} {...props}>
+			<DraggerIcon className="absolute top-0 left-1/4 -translate-x-2/3 h-full w-auto text-black-700 hidden md:block" />
+			<DraggerIcon className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-auto text-black-700 hidden md:block" />
+			<DraggerIcon className="absolute top-0 right-1/4 translate-x-2/3 h-full w-auto text-black-700 hidden md:block" />
+			<li className="flex justify-center h-full md:min-h-10">
+				<Slot variant="locked" label={min} />
+			</li>
+			{slots.map((slot, index) => (
+				<li key={`${index}-${slot}`} className="flex justify-center h-full md:min-h-10">
+					<Slot
+						{...slot}
+						id={`tutorial-slot-${index}`}
+						label={slot.label || index + 2}
+						value={slot.value || 0}
+						invalid={slot.invalid || invalidIndexes.has(index)}
+					/>
+				</li>
+			))}
+			<li className="flex justify-center h-full md:min-h-10">
+				<Slot variant="locked" label={max} />
+			</li>
+			<li className="justify-center flex md:hidden">
+				<Slot variant="placeholder" />
+			</li>
+		</ul>
+	);
+};

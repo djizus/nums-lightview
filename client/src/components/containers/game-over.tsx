@@ -1,0 +1,443 @@
+import { cn } from "@/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
+import { Button } from "@/components/ui/button";
+import {
+  AddIcon,
+  CrownIcon,
+  RefreshIcon,
+  ShadowEffect,
+} from "@/components/icons";
+import { useId, useState, useEffect, useMemo } from "react";
+import Confetti from "react-confetti";
+import { Link } from "@/lib/router";
+import { Stages, type StagesProps } from "@/components/containers";
+import { Share, type ShareProps, Close } from "@/components/elements";
+
+export interface GameOverProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof gameOverVariants> {
+  stages: StagesProps;
+  payout: number;
+  value: number;
+  score: number;
+  newGameId: number;
+  newGameCount: number;
+  shareProps?: ShareProps;
+  onClaim?: null | (() => void);
+  onClose: () => void;
+  onPurchase: () => void;
+  onPlayAgain?: () => void; // For practice mode
+}
+
+const gameOverVariants = cva(
+  "select-none relative flex flex-col items-center p-6 md:pt-0 gap-4 md:gap-6 h-full w-full justify-between",
+  {
+    variants: {
+      variant: {
+        default:
+          "rounded-2xl md:rounded-3xl bg-black-200 border-2 border-black-300 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-[4px]",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  },
+);
+
+export const GameOver = ({
+  stages,
+  payout,
+  value,
+  score,
+  newGameId,
+  newGameCount,
+  shareProps,
+  onClaim,
+  onClose,
+  onPurchase,
+  onPlayAgain,
+  variant,
+  className,
+  ...props
+}: GameOverProps) => {
+  const filterId = useId();
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
+  });
+
+  const isPractice = useMemo(() => {
+    return onClaim === null;
+  }, [onClaim]);
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
+
+  return (
+    <div className={cn(gameOverVariants({ variant, className }))} {...props}>
+      {/* Confetti */}
+      {windowDimensions.width > 0 && windowDimensions.height > 0 && (
+        <Confetti
+          width={windowDimensions.width}
+          height={windowDimensions.height}
+          recycle={false}
+          numberOfPieces={200}
+        />
+      )}
+
+      {/* Filters */}
+      <ShadowEffect filterId={filterId} />
+
+      {/* Mobile */}
+      <div className="flex items-center justify-between w-full px-1 md:hidden">
+        <Title />
+        {onClose && (
+          <div className="flex justify-end flex-shrink-0">
+            <Close size="md" onClick={onClose} />
+          </div>
+        )}
+      </div>
+
+      {/* Desktop */}
+      {onClose && (
+        <Close
+          size="lg"
+          onClick={onClose}
+          className="absolute z-10 top-6 right-6 hidden md:flex"
+        />
+      )}
+      <Header filterId={filterId} className="hidden md:flex" />
+
+      <div className="h-full md:h-auto w-full flex flex-col gap-6 justify-between md:justify-center items-stretch md:max-w-[416px] flex-1">
+        <div className="w-full flex flex-col gap-4 md:justify-center items-stretch flex-1 md:flex-none">
+          {/* Score */}
+          <Score score={score} className="rounded-xl" />
+
+          {/* Stages */}
+          <Stages className="w-full" states={stages.states} variant="over" />
+
+          {/* Payout and Score */}
+          <div
+            className={cn(
+              "w-full flex flex-col items-stretch gap-px",
+              isPractice && "hidden",
+            )}
+          >
+            <Payout payout={payout} className="rounded-t-xl" />
+            <Value value={value} className="rounded-b-xl" />
+          </div>
+          <PayoutInfo
+            payout={payout}
+            className={cn("rounded-xl hidden", isPractice && "flex")}
+          />
+          <Disclaimer
+            className={cn("rounded-xl hidden", isPractice && "flex")}
+          />
+        </div>
+
+        {/* Buttons */}
+        <div className="w-full flex gap-4">
+          {shareProps && (
+            <Share
+              {...shareProps}
+              className="h-12 min-w-[52px] px-2.5 bg-secondary-100 rounded-lg hover:bg-secondary-200 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.12)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)] text-white-100"
+            />
+          )}
+          {onPlayAgain ? (
+            <PlayAgain
+              filterId={filterId}
+              onClick={onPlayAgain}
+              className="flex-1"
+              variant={!onClaim ? "default" : "secondary"}
+            />
+          ) : newGameCount > 0 ? (
+            <Replay
+              filterId={filterId}
+              gameId={newGameId}
+              count={newGameCount}
+              className="flex-1"
+              variant={!onClaim ? "default" : "secondary"}
+            />
+          ) : (
+            <NewGame
+              filterId={filterId}
+              onClick={onPurchase}
+              className="flex-1"
+              variant={!onClaim ? "default" : "secondary"}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Title = () => {
+  return (
+    <h2
+      className="text-[36px]/6 md:text-[64px]/[44px] text-white-100 uppercase tracking-wider translate-y-0.5"
+      style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+    >
+      Game Over
+    </h2>
+  );
+};
+
+const Header = ({
+  filterId,
+  className,
+}: {
+  filterId: string;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={cn(
+        "h-12 md:h-[88px] flex items-center justify-between gap-2 md:gap-2.5 px-5 md:px-8 bg-primary-700 rounded-b-[20px] md:rounded-b-[32px] text-primary-100",
+        className,
+      )}
+    >
+      <strong
+        className="text-[36px]/[24px] md:text-[64px]/[44px] tracking-wide uppercase translate-y-0.5 md:translate-y-1 font-thin"
+        style={{ textShadow: "4px 4px 0px rgba(0, 0, 0, 0.25)" }}
+      >
+        Game
+      </strong>
+      <CrownIcon
+        className="text-primary-500"
+        size="lg"
+        style={{ filter: `url(#${filterId})` }}
+      />
+      <strong
+        className="text-[36px]/[24px] md:text-[64px]/[44px] tracking-wide uppercase translate-y-0.5 md:translate-y-1 font-thin"
+        style={{ textShadow: "4px 4px 0px rgba(0, 0, 0, 0.25)" }}
+      >
+        Over
+      </strong>
+    </div>
+  );
+};
+
+const Payout = ({
+  payout,
+  className,
+}: {
+  payout: number;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={cn(
+        "px-4 py-6 flex flex-col items-center gap-3 bg-primary-800 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.04)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        className,
+      )}
+    >
+      <p
+        className={cn(
+          "text-lg/3 tracking-wide translate-y-0.5 text-yellow-400",
+        )}
+      >
+        Payout
+      </p>
+      <p
+        className="text-[48px]/[33px] tracking-wide translate-y-1 text-yellow-100 font-thin"
+        style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+      >
+        {`${payout.toLocaleString()} NUMS`}
+      </p>
+    </div>
+  );
+};
+
+const Disclaimer = ({ className }: { className?: string }) => {
+  return (
+    <div
+      className={cn(
+        "px-12 py-3 flex flex-col items-center gap-3 bg-primary-800 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.04)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        className,
+      )}
+    >
+      <p className="text-sm font-sans text-center text-primary-200">
+        Play with an entry fee to to win real money rewards
+      </p>
+    </div>
+  );
+};
+
+const PayoutInfo = ({
+  payout,
+  className,
+}: {
+  payout: number;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={cn(
+        "px-4 py-3 flex flex-col items-center gap-3 bg-primary-800 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.04)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        className,
+      )}
+    >
+      <p className="text-sm font-sans text-center">
+        <span className="text-yellow-400">You would have earned </span>
+        <span className="text-yellow-100">{payout.toLocaleString()} Nums</span>
+      </p>
+    </div>
+  );
+};
+
+const Score = ({ score, className }: { score: number; className?: string }) => {
+  return (
+    <div
+      className={cn(
+        "px-4 py-4 md:py-6 flex flex-col items-center gap-3 bg-primary-800 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.04)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        className,
+      )}
+    >
+      <p className="text-[22px]/[15px] tracking-wide translate-y-0.5 text-white-400">
+        Score
+      </p>
+      <p
+        className="text-[64px]/[44px] tracking-wide translate-y-1 text-white-100 font-thin"
+        style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+      >
+        {score.toLocaleString()}
+      </p>
+    </div>
+  );
+};
+
+const Value = ({ value, className }: { value: number; className?: string }) => {
+  return (
+    <div
+      className={cn(
+        "px-4 py-6 flex flex-col items-center gap-3 bg-primary-800 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.04)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        className,
+      )}
+    >
+      <p
+        className={cn("text-lg/3 tracking-wide translate-y-0.5 text-green-400")}
+      >
+        Value
+      </p>
+      <p
+        className={cn(
+          "text-[48px]/[33px] tracking-wide translate-y-1 text-green-100 font-thin relative",
+          "before:content-['~'] before:absolute before:right-full before:mr-2 before:leading-[inherit] before:text-green-400",
+        )}
+        style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+      >
+        {`$${value.toFixed(2).toLocaleString()}`}
+      </p>
+    </div>
+  );
+};
+
+export const Replay = ({
+  filterId,
+  gameId,
+  count,
+  variant,
+  className,
+}: {
+  filterId: string;
+  gameId: number;
+  count: number;
+  variant?: "default" | "secondary";
+  className?: string;
+}) => {
+  return (
+    <Button
+      variant={variant}
+      className={cn("h-12 gap-1", className)}
+      disabled={count === 0}
+    >
+      <Link
+        to={`/game/${gameId}`}
+        className="w-full h-full flex items-center justify-center"
+      >
+        <RefreshIcon size="lg" style={{ filter: `url(#${filterId})` }} />
+        <p
+          className="px-1 text-[28px]/[19px] tracking-wide translate-y-0.5"
+          style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+        >
+          Play Again
+        </p>
+        <p className="ml-2 px-3 h-8 rounded-full bg-black-700 flex items-center justify-center">
+          <span
+            className="text-[28px]/[19px] tracking-wide translate-y-0.5"
+            style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+          >
+            {count}
+          </span>
+        </p>
+      </Link>
+    </Button>
+  );
+};
+
+export const NewGame = ({
+  filterId,
+  onClick,
+  variant,
+  className,
+}: {
+  filterId: string;
+  onClick: () => void;
+  variant?: "default" | "secondary";
+  className?: string;
+}) => {
+  return (
+    <Button
+      variant={variant}
+      className={cn("h-12 gap-1", className)}
+      onClick={onClick}
+    >
+      <AddIcon size="lg" style={{ filter: `url(#${filterId})` }} />
+      <p
+        className="px-1 text-[28px]/[19px] tracking-wide translate-y-0.5"
+        style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+      >
+        New Game
+      </p>
+    </Button>
+  );
+};
+
+export const PlayAgain = ({
+  filterId,
+  onClick,
+  variant,
+  className,
+}: {
+  filterId: string;
+  onClick: () => void;
+  variant?: "default" | "secondary";
+  className?: string;
+}) => {
+  return (
+    <Button
+      variant={variant}
+      className={cn("h-12 gap-1", className)}
+      onClick={onClick}
+    >
+      <RefreshIcon size="lg" style={{ filter: `url(#${filterId})` }} />
+      <p
+        className="px-1 text-[28px]/[19px] tracking-wide translate-y-0.5"
+        style={{ textShadow: "2px 2px 0px rgba(0, 0, 0, 0.25)" }}
+      >
+        Play Again
+      </p>
+    </Button>
+  );
+};

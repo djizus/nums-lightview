@@ -1,0 +1,64 @@
+[world]
+name = "Nums"
+seed = "nums-v1.0.18"
+description = "On chain version of the Number Challenge or Blind Number Challenge game."
+website = "https://nums.gg"
+
+[namespace]
+default = "NUMS"
+
+[env]
+rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
+# world_address = "0x06bba2fea5c315483d0a698e21c29aa2c305e53aae4da39f16e8215845dc0848"
+account_address = "0x07bf136d158c29265d8ca4841438d69fab039e907fbba7e44718f979f36f3573"
+keystore_path = "./keystore_mainnet.json"
+
+[migration]
+order_inits = [
+  "NUMS-Token",
+  "NUMS-Setup",
+  "NUMS-Play",
+  "NUMS-Collection",
+  "NUMS-Vault",
+]
+skip_contracts = ["NUMS-Vrf", "NUMS-Faucet"]
+disable_multicall = true
+
+[writers]
+"NUMS" = ["NUMS-Setup", "NUMS-Play"]
+
+[owners]
+"NUMS" = ["NUMS-Collection", "NUMS-Vault", "NUMS-Token"]
+
+[init_call_args]
+"NUMS-Vault" = [
+  "0x1", # open: true
+  "0x0", # fee: 500 basis points (10000 basis points = 100%)
+]
+"NUMS-Governor" = []
+"NUMS-Treasury" = [
+  "0xe10",                                                              # min_delay: 1 hour
+  "0x0000000000000000000000000000000000000000000000000000000000000000", # Admin address
+]
+"NUMS-Token" = [
+  "0xD3C21BCECCEDA1000000",                                             # initial_supply: 1.0M NUMS
+  "0x018C51FE096b48D6e8a797825194d86935cB883576bB086001Ee4d49FA951719", # recipient
+]
+"NUMS-Setup" = [
+  "0x0",                                                                # Option::Some
+  "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f", # vrf_address
+  "0x0",                                                                # Option::Some
+  "0x033068f6539f8e6e6b131e6b2b814e6c34a5224bc66947c47dab9dfee93b35fb", # quote_address: USDC
+  "0x03F7F4E5a23A712787F0C100f02934c4A88606B7F0C880c2FD43e817E6275d83", # team_address
+  "0x04505a9f06f2bd639b6601f37a4dc0908bb70e8e0e0c34b1220827d64f4fc066", # ekubo router address
+  "0x02e0af29598b407c8716b17f6d2795eca1b471413fa03fb145a5e33722184067", # ekubo positions address
+  "0x1E8480",                                                           # entry_price: 2.000000 USDC
+  "0xD3C21BCECCEDA1000000",                                             # target_supply: 1M NUMS
+  "0x46",                                                               # burn_percentage: 70%,
+  "0x0",                                                                # vault_percentage: 0%,
+  "0xA",                                                                # average_score: 10,
+  "0xccccccccccccccccccccccccccccccc",                                  # pool_fee,
+  "0x56a4c",                                                            # pool_tick_spacing,
+  "0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc", # pool_extension,
+  "0x005974abf73ca39b2c71a5e9459590f50649e53b296e747d2fc414bbd8839aab", # bundle_allower
+]

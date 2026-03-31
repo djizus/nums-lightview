@@ -1,0 +1,115 @@
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
+
+import { useAudio } from "@/context/audio";
+import { cn } from "@/lib/utils";
+import { SpinnerIcon } from "@/components/icons";
+
+const buttonVariants = cva(
+  "select-none inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-yellow-100 text-gray-100 rounded-lg hover:bg-yellow-200 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.12)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        constructive:
+          "text-green-100 bg-green-800 hover:bg-green-700 shadow-none rounded-lg",
+        destructive:
+          "text-red-100 bg-red-800 hover:bg-red-700 shadow-none rounded-lg",
+        informative:
+          "text-yellow-100 bg-yellow-800 hover:bg-yellow-700 shadow-none rounded-lg",
+        outline:
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary-100 rounded-lg hover:bg-secondary-200 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.12)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        tertiary:
+          "text-gray-100 bg-tertiary-100 rounded-lg hover:bg-tertiary-200 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.12)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        muted:
+          "bg-primary-500 rounded-lg hover:bg-primary-400 shadow-[1px_1px_0px_0px_rgba(255,255,255,0.12)_inset,1px_1px_0px_0px_rgba(0,0,0,0.12)]",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-6 py-1 gap-3",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9",
+        sound: "h-12 w-16 px-4 py-2",
+        balance: "h-12 w-[172px] px-4 py-2",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+);
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  loading?: boolean;
+  placeSound?: boolean;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      placeSound = false,
+      onClick,
+      onMouseEnter,
+      disabled,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const Comp = asChild ? Slot : "button";
+    const { playClick, playPlace, playHover } = useAudio();
+
+    const handleMouseEnter = React.useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (!disabled) {
+          playHover();
+        }
+        onMouseEnter?.(event);
+      },
+      [disabled, onMouseEnter, playHover],
+    );
+
+    const handleClick = React.useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (!disabled && !placeSound) {
+          playClick();
+        } else if (!disabled && placeSound) {
+          playPlace();
+        }
+        onClick?.(event);
+      },
+      [placeSound, disabled, onClick, playClick],
+    );
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        disabled={disabled}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        {...props}
+      >
+        {loading ? <SpinnerIcon className="animate-spin" /> : children}
+      </Comp>
+    );
+  },
+);
+Button.displayName = "Button";
+
+export { Button, buttonVariants };
